@@ -4,8 +4,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.*;
 
-import static java.lang.System.exit;
-
 
 public class Main {
     public static void main(String[] args) throws Exception{
@@ -62,10 +60,6 @@ public class Main {
         }
         br.close();
 
-        //Printing frequency hash-map
-//        for (HashMap.Entry<String, Integer> entry : hashMap.entrySet()) {
-//            System.out.println(entry.getKey() + ":" + entry.getValue());
-//        }
 
         PriorityQueue<HuffmanNode> pq
                 = new PriorityQueue<>(hashMap.size(), new NodeComparator());
@@ -89,7 +83,7 @@ public class Main {
 
         //Reading file once again to encode it to bits
         br = new BufferedReader(new FileReader(file));
-        String compressedCode = new String();
+        StringBuilder compressedCodeBuilder = new StringBuilder();
         while ((r = br.read()) != -1) {
             char ch = (char) r;
             String myStr = Character.toString(ch);
@@ -97,10 +91,11 @@ public class Main {
                 continue;
             }
             String code = tree.getCode(myStr);
-            compressedCode = compressedCode + code;   //Append to final encoded string
+            compressedCodeBuilder.append(code);   //Append to final encoded string
+
         }
         br.close();
-
+        String compressedCode = compressedCodeBuilder.toString();
 
         //Splitting final encoded bits to 8 bit strings
         String[] subStrings = splitToNChar(compressedCode, 8);
@@ -127,7 +122,6 @@ public class Main {
         }
         fw.close();
 
-        //        System.out.println(compressedCode);
     }
 
 
@@ -171,20 +165,20 @@ public class Main {
         //Reading compressed content and decoding them to bits
         read.useDelimiter("(?<=.)");  //Scanner reads character by character
         read.next();
-        String code = "";
+        StringBuilder codeBuilder = new StringBuilder();
         while (read.hasNext()){
             String character = read.next();
             String bits = convertToBinary(character.charAt(0));
             if(character.length() >1){   //Read new line and character
-                code += bits;       //Add new line bits
+                codeBuilder.append(bits);       //Add new line bits
                 bits = convertToBinary(character.charAt(1));
-                code += bits;       //Add character bits
+                codeBuilder.append(bits);       //Add character bits
                 continue;
             }
-            code += bits;
+            codeBuilder.append(bits);
         }
         read.close();
-
+        String code = codeBuilder.toString();
         //Remove padding from last 8 bit string
         String lastSubString = code.substring(code.length()-8);
         lastSubString = lastSubString.substring(8-sizeOfLastSubString);
@@ -202,8 +196,6 @@ public class Main {
             }
         }
         fw.close();
-
-        //System.out.println("Code : "+code);
 
     }
 
