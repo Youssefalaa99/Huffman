@@ -181,7 +181,6 @@ public class Main {
                 code += bits;       //Add character bits
                 continue;
             }
-            System.out.println(character+":"+bits);
             code += bits;
         }
         read.close();
